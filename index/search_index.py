@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from enum import Enum
-from file_store import File
-from index.index_instances import SearchIndexName
+from file import File
+from index.index_name import SearchIndexName
 from typing import List
 
 class SearchIndex(ABC):

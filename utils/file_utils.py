@@ -1,35 +1,39 @@
-from utils import constants
-import subprocess
+#import psutil
 import sys
 from pathlib import Path
+from typing import List
+from file import File
 
 def get_all_storage_devices():
-    # On windows
-    # Get the fixed drives
-    # wmic logicaldisk get name,description
-    if constants.WindowsPlatformName in sys.platform:
-        drivelist = subprocess.Popen('wmic logicaldisk get name,description', shell=True, stdout=subprocess.PIPE)
-        drivelisto, _ = drivelist.communicate()
-        driveLines = drivelisto.split('\n')
-        return driveLines
+    #p = r'C:\Users\Administrator\Desktop\practice'
+    p = 'C:\\'
+    return [Path(p)]
 
-    """
-        if 'linux' in sys.platform:
-            listdrives=subprocess.Popen('mount', shell=True, stdout=subprocess.PIPE)
-            listdrivesout, _ = listdrives.communicate()
-            for idx,drive in enumerate(filter(None,listdrivesout)):
-                listdrivesout[idx] = drive.split()[2]
-            return listdrivesout
-    """
-    raise NotImplementedError("Only windows is supported.")
+def convert_from_pathlib_to_file(pathlib_files: List[Path]) -> List[File]:
+    files = []
+    for pathlib_file in pathlib_files:
+        try:
+            file = File(pathlib_file)
+        except:
+            continue
+        files.append(file)
+    return files
 
-
-def get_all_files_in_dir(dir):    
+def get_all_files_in_dir(dir) -> List[File]:    
     path = Path(dir).glob('**/*')
-    files_in_dir = [resource for resource in path if resource.is_file()]
+    pathlib_files_in_dir = []
+    for resource in path:
+        try:
+            if resource.is_file():
+                pathlib_files_in_dir.append(resource)
+        except:
+            print('Got exception for file: {0}'.format(resource))
+            continue
+
+    files_in_dir = convert_from_pathlib_to_file(pathlib_files_in_dir)
     return files_in_dir
 
-def get_all_files_on_device():
+def get_all_files_on_device() -> List[File]:
     storage_devices = get_all_storage_devices()
     all_files = []
     for storage_device in storage_devices:

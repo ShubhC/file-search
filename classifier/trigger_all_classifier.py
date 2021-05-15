@@ -1,6 +1,7 @@
 import classifier
+from classifier import classifier_names
 from classifier.classifier import BinaryClassifier
-from classifier.classifier_instances import ClassifierNames
+from classifier.classifier_names import ClassifierNames
 
 class TriggerAllClassifier(BinaryClassifier):
     

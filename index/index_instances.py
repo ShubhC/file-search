@@ -1,9 +1,7 @@
 from enum import Enum
 from dataclasses import dataclass
 from index.lookup_index import LookupIndex as LookupIndexClass
-
-class SearchIndexName(Enum):
-    LookupIndex = 0
+from index.index_name import SearchIndexName
 
 @dataclass
 class SearchIndexRepo:
