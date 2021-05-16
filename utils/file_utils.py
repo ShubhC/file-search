@@ -5,8 +5,8 @@ from typing import List
 from file import File
 
 def get_all_storage_devices():
-    #p = r'C:\Users\Administrator\Desktop\practice'
-    p = 'C:\\'
+    p = r'C:\Users\Administrator\Desktop\practice'
+    #p = 'C:\\'
     return [Path(p)]
 
 def convert_from_pathlib_to_file(pathlib_files: List[Path]) -> List[File]:

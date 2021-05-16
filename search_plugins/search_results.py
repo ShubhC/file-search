@@ -36,5 +36,5 @@ class SearchResult:
         return self._search_plugin_name
     
     @property
-    def search_results(self):
+    def search_results(self) -> List[SearchResultItem]:
         return self._search_result_items

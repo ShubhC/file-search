@@ -1,8 +1,11 @@
 from classifier.classifier import Classifier
 from classifier.trigger_all_classifier import TriggerAllClassifier
-from enum import Enum
-from dataclasses import dataclass
         
-@dataclass
 class ClassifierRepo:
-    TriggerAllClassifier : Classifier = TriggerAllClassifier()
+
+    def __init__(self) -> None:
+        self._trigger_all_classifier = TriggerAllClassifier()
+
+    @property
+    def trigger_all_classifier(self) -> Classifier:
+        return self._trigger_all_classifier

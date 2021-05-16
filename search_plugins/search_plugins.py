@@ -1,3 +1,4 @@
+from search_request import SearchRequest
 from classifier.classifier import BinaryClassifier, Classifier
 from abc import ABC, abstractmethod
 from index.search_index import SearchIndex
@@ -10,9 +11,7 @@ class SearchPlugin(ABC):
         Abstract class for search plugins
         All search plugins are stateless and 
         only act on the current user query.
-    """
-    
-    @abstractmethod
+    """    
     def __init__(self,
                  search_model_name: SearchPluginName, 
                  indexes: List[SearchIndex],
@@ -34,5 +33,5 @@ class SearchPlugin(ABC):
         return self._indexes
 
     @abstractmethod
-    def search(self, query: str) -> SearchResult:
+    def search(self, search_request: SearchRequest) -> SearchResult:
         pass

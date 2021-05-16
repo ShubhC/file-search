@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod, abstractproperty
 from enum import Enum
 
-class Classifier(ABC):
-    @abstractmethod    
+class Classifier(ABC):    
     def __init__(self, classifier_name) -> None:
         self._classifier_name = classifier_name
     

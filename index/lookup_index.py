@@ -8,11 +8,11 @@ from utils import file_utils
 
 class LookupIndex(SearchIndex):
     
-    def __init__(self) -> None:
+    def __init__(self, file_store: FileStore) -> None:
         self._index_name = SearchIndexName.LookupIndex
         super().__init__(self._index_name)
         self._dictionary = dict()
-        all_files = FileStore.all_files_as_list
+        all_files = file_store.all_files_as_list
         self.append(all_files)
 
     def _append_entry(self, entry: str, file: File):
