@@ -21,6 +21,7 @@ from search_plugins.search_plugin_instances import SearchPluginRepo
 search_plugin_repo = SearchPluginRepo()
 lookup_search_plugin = search_plugin_repo.lookup_search_plugin
 regex_search_plugin = search_plugin_repo.regex_search_plugin
+multi_word_search_plugin = search_plugin_repo.multi_word_search_plugin
 
 while True:
     search_query = input('Enter Search Query ')
@@ -31,3 +32,8 @@ while True:
 
     regex_results = regex_search_plugin.search(search_request)
     print_search_results(regex_results)
+
+    multi_word_lookup_results = multi_word_search_plugin.search(search_request)
+    print_search_results(multi_word_lookup_results)
+
+    

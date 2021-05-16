@@ -1,7 +1,7 @@
 import classifier
 from classifier.classifier import Classifier, BinaryClassifier
 from file import File
-from typing import List
+from typing import Dict, List, Set
 from search_plugins.search_results import SearchResult, SearchResultItem
 
 class SearchResultConverter:
@@ -12,7 +12,7 @@ class SearchResultConverter:
                            default_classifier_score: float = -1.0,
                            default_index_score: float = -1.0, 
                            classifier_scores: List[float] = None,
-                           index_scores: List[float] = None):
+                           index_scores: List[float] = None) -> SearchResult:
         if classifier_scores:
             assert(len(index_results) == len(classifier_scores), \
                 'index_results and classifier scores should be of same size')
@@ -40,3 +40,4 @@ class SearchResultConverter:
             search_result_items.append(search_result_item)
 
         return SearchResult(search_model_name, search_result_items)
+

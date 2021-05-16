@@ -38,3 +38,6 @@ class SearchResult:
     @property
     def search_results(self) -> List[SearchResultItem]:
         return self._search_result_items
+
+    def append(self, search_result_items: List[SearchResultItem]) -> None:
+        self.search_results += search_result_items

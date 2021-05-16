@@ -1,7 +1,7 @@
 #import psutil
 import sys
 from pathlib import Path
-from typing import List
+from typing import List, Dict
 from file import File
 
 def get_all_storage_devices():
@@ -41,3 +41,24 @@ def get_all_files_on_device() -> List[File]:
         all_files += storage_device_files
         
     return all_files
+
+def get_files_by_path(files: List[File]) -> Dict[str, File]:
+    files_by_path = dict()
+    for file in files:
+        file_path = file.file_path
+        if file_path in files_by_path:
+            files_by_path[file_path].append(file)
+        else:
+            files_by_path[file_path] = [file]
+    return files_by_path
+
+def get_common_files(files_A: List[File],
+                     files_B: List[File]) -> List[File]:
+    files_by_path_A = get_files_by_path(files_A)
+    files_by_path_B = get_files_by_path(files_B)
+    files_path_A = files_by_path_A.keys()
+    files_path_B = files_by_path_B.keys()
+    common_file_path = files_path_A & files_path_B
+    common_file_names = [files_by_path_A[file_path] for file_path in common_file_path] + \
+                        [files_by_path_B[file_path] for file_path in common_file_path]
+    return common_file_names

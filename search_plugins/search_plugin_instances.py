@@ -1,3 +1,4 @@
+from search_plugins.multi_word_lookup_search_plugin import MultiWordLookupSearchPlugin
 from file_store import FileStore
 from index.index_instances import SearchIndexRepo
 from classifier.classifier_instances import ClassifierRepo
@@ -13,6 +14,7 @@ class SearchPluginRepo:
         search_index_repo = SearchIndexRepo(file_store)
         self._lookup_search_plugin = LookupSearchPlugin(search_index_repo, classifier_repo)
         self._regex_search_plugin = RegexSearchPlugin(search_index_repo, classifier_repo)
+        self._multi_word_search_plugin = MultiWordLookupSearchPlugin(search_index_repo, classifier_repo)
 
     @property
     def lookup_search_plugin(self) -> SearchPlugin:
@@ -22,3 +24,6 @@ class SearchPluginRepo:
     def regex_search_plugin(self) -> SearchPlugin:
         return self._regex_search_plugin
 
+    @property
+    def multi_word_search_plugin(self) -> SearchPlugin:
+        return self._multi_word_search_plugin
