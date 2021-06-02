@@ -3,8 +3,7 @@
 """
 #import sys
 #sys.path.append('.')
-
-from file_store import FileStore
+"""
 from index.index_instances import SearchIndexRepo
 from search_plugins.search_results import SearchResult
 
@@ -36,4 +35,17 @@ while True:
     multi_word_lookup_results = multi_word_search_plugin.search(search_request)
     print_search_results(multi_word_lookup_results)
 
-    
+"""
+
+import sys
+sys.path.append('.')
+
+from path_store import PathStore
+from adapter.whoosh_adapter import WhooshAdapter
+
+path_store = PathStore()
+whoosh_adapter = WhooshAdapter(path_store)
+while 1:
+    q = input()
+    whoosh_adapter.wildcard_search(q)
+    print('done searching')

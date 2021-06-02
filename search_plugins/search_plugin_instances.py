@@ -1,5 +1,5 @@
 from search_plugins.multi_word_lookup_search_plugin import MultiWordLookupSearchPlugin
-from file_store import FileStore
+from file_store import PathStore
 from index.index_instances import SearchIndexRepo
 from classifier.classifier_instances import ClassifierRepo
 from search_plugins.search_plugins import SearchPlugin
@@ -9,7 +9,7 @@ from search_plugins.regex_search_plugin import RegexSearchPlugin
 class SearchPluginRepo:
 
     def __init__(self) -> None:
-        file_store = FileStore()
+        file_store = PathStore()
         classifier_repo = ClassifierRepo()
         search_index_repo = SearchIndexRepo(file_store)
         self._lookup_search_plugin = LookupSearchPlugin(search_index_repo, classifier_repo)

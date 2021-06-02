@@ -5,42 +5,33 @@ from typing import List, Dict
 from file import File
 
 def get_all_storage_devices():
-    p = r'C:\Users\Administrator\Desktop\practice'
+    #p = r'C:\Users\Administrator\Desktop\practice'
+    p = r'S:\anstrig\AnswersTriggering\private\xapnext\AnswersTriggering'
     #p = 'C:\\'
     return [Path(p)]
 
-def convert_from_pathlib_to_file(pathlib_files: List[Path]) -> List[File]:
-    files = []
-    for pathlib_file in pathlib_files:
-        try:
-            file = File(pathlib_file)
-        except:
-            continue
-        files.append(file)
-    return files
-
-def get_all_files_in_dir(dir) -> List[File]:    
+def get_all_path_in_dir(dir) -> List[Path]:
+    
+    # get all files and subdirs in dir
     path = Path(dir).glob('**/*')
+    
     pathlib_files_in_dir = []
     for resource in path:
         try:
-            if resource.is_file():
-                pathlib_files_in_dir.append(resource)
+            pathlib_files_in_dir.append(resource)
         except:
             print('Got exception for file: {0}'.format(resource))
             continue
+    return pathlib_files_in_dir
 
-    files_in_dir = convert_from_pathlib_to_file(pathlib_files_in_dir)
-    return files_in_dir
-
-def get_all_files_on_device() -> List[File]:
+def get_all_path_on_device() -> List[Path]:
     storage_devices = get_all_storage_devices()
-    all_files = []
+    all_path = []
     for storage_device in storage_devices:
-        storage_device_files = get_all_files_in_dir(storage_device)
-        all_files += storage_device_files
-        
-    return all_files
+        storage_device_path = get_all_path_in_dir(storage_device)
+        all_path += storage_device_path
+
+    return all_path
 
 def get_files_by_path(files: List[File]) -> Dict[str, File]:
     files_by_path = dict()

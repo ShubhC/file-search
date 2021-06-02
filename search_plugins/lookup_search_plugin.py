@@ -1,4 +1,4 @@
-from file_store import FileStore
+from file_store import PathStore
 from search_request import SearchRequest
 import classifier
 from search_plugins import search_utils

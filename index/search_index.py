@@ -14,9 +14,5 @@ class SearchIndex(ABC):
         return self._index_name
     
     @abstractmethod
-    def append(self, items : list):
-        pass
-    
-    @abstractmethod
     def search(self, query: str, **kwargs) -> List[File]:
         pass

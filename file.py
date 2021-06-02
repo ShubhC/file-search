@@ -1,11 +1,8 @@
 
 from typing import List
 from pathlib import Path
-import subprocess
 
 class File:
-    #(st_mode=33206, st_ino=281474976711694, st_dev=388544000, st_nlink=1, st_uid=0, st_gid=0, 
-    # st_size=297, st_atime=1620803957, st_mtime=1620801881, st_ctime=1620801726)
     def __init__(self, pathlib_file : Path) -> None:
         self._pathlib_file = pathlib_file
         self._file_stat = self._pathlib_file.stat()
