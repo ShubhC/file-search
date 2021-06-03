@@ -1,4 +1,3 @@
-from file_store import PathStore
 from search_request import SearchRequest
 import classifier
 from search_plugins import search_utils
@@ -17,12 +16,12 @@ class LookupSearchPlugin(SearchPlugin):
     def __init__(self, 
                  search_index_repo: SearchIndexRepo,
                  classifier_repo: ClassifierRepo) -> None:
-        classifiers = [classifier_repo.trigger_all_classifier]
+        classifiers = [classifier_repo.multi_word_wildcard_classifier]
         indexes = [search_index_repo.lookup_index]
         search_model_name = SearchPluginName.LookupSeachPlugin
         super().__init__(search_model_name, indexes, classifiers)
-
-    def search(self, search_request: SearchRequest) -> SearchResult:
+    
+    def _search(self, search_request: SearchRequest) -> SearchResult:
         index = self.indexes[0]
 
         index_results = index.search(search_request.raw_query)
@@ -30,4 +29,5 @@ class LookupSearchPlugin(SearchPlugin):
                                                                  search_model_name = self.search_model_name,
                                                                  default_classifier_score=1.0,
                                                                  default_index_score=1.0)
+        print(type(search_result))
         return search_result

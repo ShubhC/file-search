@@ -12,7 +12,6 @@ class LookupIndex(SearchIndex):
         self._whoosh_adapter = whoosh_adapter
 
     def search(self, query: str, **kwargs) -> List[Path]:
-        results_with_query_as_prefix = self._whoosh_adapter.wildcard_search('*' + query)
-        results_with_query_as_suffix = self._whoosh_adapter.wildcard_search(query + '*')
-        return results_with_query_as_prefix + results_with_query_as_suffix
+        query = query.lower()
+        return self._whoosh_adapter.contains_or_wildcard_search(query)
         

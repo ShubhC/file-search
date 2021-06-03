@@ -32,6 +32,17 @@ class SearchPlugin(ABC):
     def indexes(self) -> List[SearchIndex]:
         return self._indexes
 
+    def is_domain_query(self, search_request: SearchRequest) -> SearchResult:
+        for classifier in self.classifiers:
+            if not classifier.predict(search_request):
+                return False
+        return True
+
     @abstractmethod
+    def _search(self, search_request: SearchRequest) -> SearchResult:
+        pass 
+
     def search(self, search_request: SearchRequest) -> SearchResult:
-        pass
+        if not self.is_domain_query(search_request):
+            return None
+        return self._search

@@ -1,10 +1,10 @@
+from pathlib import Path
 from search_plugins.search_plugin_name import SearchPluginName
 from typing import List
-from file import File
 
 class SearchResultItem:    
     def __init__(self, 
-                 item: File,
+                 item: Path,
                  classifier_score: float,
                  index_score: float) -> None:
         self._item = item
@@ -12,7 +12,7 @@ class SearchResultItem:
         self._index_score = index_score
     
     @property
-    def item(self) -> File:
+    def item(self) -> Path:
         return self._item
     
     @property

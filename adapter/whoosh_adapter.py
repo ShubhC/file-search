@@ -15,6 +15,8 @@ class WhooshAdapter:
         self._get_all_path = self._path_store.all_path_as_list
         self._whoosh_index = self._create_whoosh_index()
         self._update_index(self._get_all_path, None)
+        self._file_or_dir_field_name = 'file_or_dir'
+        self._path_field_name = 'path'
       
     def _create_whoosh_index(self):
         self._schema = Schema(file_or_dir=TEXT, path=STORED)
@@ -35,19 +37,38 @@ class WhooshAdapter:
     
     def _search_whoosh_query(self, whoosh_query) -> List[Path]:
         with self._whoosh_index.searcher() as searcher:
-            search_results = searcher.search(whoosh_query)        
-            for result in search_results:
-                print(result)
-
-        return search_results        
+            search_results = searcher.search(whoosh_query)
+            search_paths = [Path(search_result[self._path_field_name]) for search_result in search_results]
+            
+        return search_paths
     
     def wildcard_search(self, query: str) -> List[Path]:
-        whoosh_wildcard_search_query = Wildcard('file_or_dir', query)
+        whoosh_wildcard_search_query = Wildcard(self._file_or_dir_field_name, query)
         return self._search_whoosh_query(whoosh_wildcard_search_query)
         
     def regex_search(self, query: str) -> List[Path]:
-        whoosh_regex_search_query = Regex('file_or_dir', query)
-        return self._search_whoosh_query(whoosh_regex_search_query)
+        whoosh_regex_search_query = Regex(self._file_or_dir_field_name, query)
+        return self._search_whoosh_query(whoosh_regex_search_query)    
+        
+    def _create_wildcard_search_query(self, query: str) -> Wildcard:
+        if '*' in query or '.' in query:
+            return Wildcard(self._file_or_dir_field_name, query)
+        return Wildcard(self._file_or_dir_field_name, '*' + query + '*')        
+        
+    def contains_or_wildcard_search(self, query: str) -> List[Path]:
+        if not query:
+            return []
+        whoosh_contains_query = self._create_wildcard_search_query(query)
+        return self._search_whoosh_query(whoosh_contains_query)
+        
+    def multi_word_contains_or_wildcard_search(self, multi_word_query: List[str]) -> List[Path]:
+        # create multi-word query
+        if not multi_word_query:
+            return []
+        whoosh_multisearch_query = self._create_wildcard_search_query(multi_word_query[0])
+        for i in range(1, len(multi_word_query)):
+            whoosh_multisearch_query &= self._create_wildcard_search_query(multi_word_query[i])
 
-
+        return self._search_whoosh_query(whoosh_multisearch_query)
+    
 

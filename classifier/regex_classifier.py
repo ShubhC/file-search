@@ -1,14 +1,13 @@
 from search_request import SearchRequest
-import classifier
-from classifier import classifier_names
 from classifier.classifier import BinaryClassifier
 from classifier.classifier_names import ClassifierNames
+from search_request import SearchMode
 
-class TriggerAllClassifier(BinaryClassifier):
+class RegexClassifier(BinaryClassifier):
     
     def __init__(self) -> None:
-        classifier_name = ClassifierNames.TriggerAll
+        classifier_name = ClassifierNames.Regex
         super().__init__(classifier_name)
 
     def predict(self, search_request: SearchRequest):
-        return True
+        return search_request.mode == SearchMode.Regex

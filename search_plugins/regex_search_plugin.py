@@ -13,10 +13,10 @@ class RegexSearchPlugin(SearchPlugin):
                  classifier_repo: ClassifierRepo) -> None:
         search_model_name = SearchPluginName.RegexSearchPlugin
         indexes = [search_index_repo.regex_index]
-        classifiers = [classifier_repo.trigger_all_classifier] 
+        classifiers = [classifier_repo.regex_classifier] 
         super().__init__(search_model_name, indexes, classifiers)
 
-    def search(self, search_request: SearchRequest) -> SearchResult:
+    def _search(self, search_request: SearchRequest) -> SearchResult:
         index = self.indexes[0]
 
         index_results = index.search(search_request.raw_query)

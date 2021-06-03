@@ -10,10 +10,8 @@ class MultiWordLookupIndex(SearchIndex):
 
     def _break_tokens(self, query: str) -> List[str]:
         split_token = ' '
-        query_tokens = query.split(split_token)
-        strip_stars = lambda x : x.replace('*','')
-        query_tokens = [strip_stars(query_token) for query_token in query_tokens]
-        query_tokens = [query_token for query_token in query_tokens if query_token]
+        query_tokens = list(set(query.split(split_token)))
+        query_tokens = [query_token.lower() for query_token in query_tokens if query_token]
         return query_tokens
 
     def __init__(self, whoosh_adapter: WhooshAdapter) -> None:
@@ -22,4 +20,5 @@ class MultiWordLookupIndex(SearchIndex):
         self._whoosh_adapter = whoosh_adapter  
 
     def search(self, query: str, **kwargs) -> List[Path]:
-        
+        query_tokens = self._break_tokens(query)
+        return self._whoosh_adapter.multi_word_contains_or_wildcard_search(query_tokens)
