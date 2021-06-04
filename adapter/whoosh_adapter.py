@@ -32,7 +32,7 @@ class WhooshAdapter:
         for path in additions:
             file_or_dir = path.name
             whoosh_index_writer.add_document(file_or_dir=file_or_dir, path=path)
-            print('adding {0} to index'.format(file_or_dir))
+            #print('adding {0} to index'.format(file_or_dir))
         whoosh_index_writer.commit()
     
     def _search_whoosh_query(self, whoosh_query) -> List[Path]:
@@ -51,7 +51,7 @@ class WhooshAdapter:
         return self._search_whoosh_query(whoosh_regex_search_query)    
         
     def _create_wildcard_search_query(self, query: str) -> Wildcard:
-        if '*' in query or '.' in query:
+        if '*' in query:
             return Wildcard(self._file_or_dir_field_name, query)
         return Wildcard(self._file_or_dir_field_name, '*' + query + '*')        
         

@@ -19,6 +19,8 @@ def get_all_path_in_dir(dir) -> List[Path]:
     for resource in path:
         try:
             pathlib_files_in_dir.append(resource)
+            if resource.is_dir():
+                print('resource {0} is directory'.format(resource))
         except:
             print('Got exception for file: {0}'.format(resource))
             continue
