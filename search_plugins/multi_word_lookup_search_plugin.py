@@ -17,15 +17,15 @@ class MultiWordLookupSearchPlugin(SearchPlugin):
                  classifier_repo: ClassifierRepo) -> None:
         classifiers = [classifier_repo.multi_word_wildcard_classifier]
         indexes = [search_index_repo.multi_word_lookup_index] 
-        search_model_name = SearchPluginName.MultiWordLookupSearchPlugin
-        super().__init__(search_model_name, indexes, classifiers)
+        search_plugin_name = SearchPluginName.MultiWordLookupSearchPlugin
+        super().__init__(search_plugin_name, indexes, classifiers)
 
     def _search(self, search_request: SearchRequest) -> SearchResult:
         index = self.indexes[0]
 
         index_results = index.search(search_request.raw_query)
         search_result = SearchResultConverter.from_index_results(index_results = index_results, 
-                                                                 search_model_name = self.search_model_name,
+                                                                 search_model_name = self.search_plugin_name,
                                                                  default_classifier_score=1.0,
                                                                  default_index_score=1.0)
         return search_result

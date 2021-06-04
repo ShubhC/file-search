@@ -13,10 +13,10 @@ class SearchPlugin(ABC):
         only act on the current user query.
     """    
     def __init__(self,
-                 search_model_name: SearchPluginName, 
+                 search_plugin_name: SearchPluginName, 
                  indexes: List[SearchIndex],
                  classifiers: List[Classifier]) -> None:
-        self._search_model_name = search_model_name
+        self._search_plugin_name = search_plugin_name
         self._indexes = indexes
         self._classifiers = classifiers
      
@@ -25,8 +25,8 @@ class SearchPlugin(ABC):
         return self._classifiers
 
     @property
-    def search_model_name(self) -> SearchPluginName:
-        return self._search_model_name
+    def search_plugin_name(self) -> SearchPluginName:
+        return self._search_plugin_name
     
     @property
     def indexes(self) -> List[SearchIndex]:
@@ -45,4 +45,4 @@ class SearchPlugin(ABC):
     def search(self, search_request: SearchRequest) -> SearchResult:
         if not self.is_domain_query(search_request):
             return None
-        return self._search
+        return self._search(search_request)
