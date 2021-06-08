@@ -1,6 +1,6 @@
 def convert_bytes(file_size_bytes):
     """
-        this function will convert bytes to MB.... GB... etc
+        converts bytes to MB.... GB... etc
     """
     for x in ['bytes', 'KB', 'MB', 'GB', 'TB']:
         if file_size_bytes < 1024.0:

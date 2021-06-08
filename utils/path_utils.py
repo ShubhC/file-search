@@ -5,8 +5,8 @@ from typing import List, Dict
 from file import File
 
 def get_all_storage_devices():
-    #p = r'C:\Users\Administrator\Desktop\practice'
-    p = r'S:\anstrig\AnswersTriggering\private\xapnext\AnswersTriggering'
+    p = r'C:\Users\Administrator\Desktop\practice'
+    #p = r'S:\anstrig\AnswersTriggering\private\xapnext\AnswersTriggering'
     #p = 'C:\\'
     return [Path(p)]
 
