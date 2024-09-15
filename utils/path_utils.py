@@ -3,12 +3,13 @@ import sys
 from pathlib import Path
 from typing import List, Dict
 from file import File
+import win32api
 
-def get_all_storage_devices():
-    p = r'C:\Users\Administrator\Desktop\practice'
-    #p = r'S:\anstrig\AnswersTriggering\private\xapnext\AnswersTriggering'
-    #p = 'C:\\'
-    return [Path(p)]
+def get_all_storage_devices() -> List[Path]:
+    drives = win32api.GetLogicalDriveStrings()
+    drives = drives.split('\000')[:-1]
+    print('Found Drives', drives)
+    return [Path(drive) for drive in drives if not drive.startswith('C')]
 
 def get_all_path_in_dir(dir) -> List[Path]:
     
