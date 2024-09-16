@@ -188,5 +188,6 @@ public
 .yarn/install-state.gz
 .pnp.*
 
-
 file-search-venv/
+*.seg
+*.toc

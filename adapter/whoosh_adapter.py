@@ -37,7 +37,7 @@ class WhooshAdapter:
     
     def _search_whoosh_query(self, whoosh_query) -> List[Path]:
         with self._whoosh_index.searcher() as searcher:
-            search_results = searcher.search(whoosh_query)
+            search_results = searcher.search(whoosh_query, limit=100_000)
             search_paths = [Path(search_result[self._path_field_name]) for search_result in search_results]
             
         return search_paths
