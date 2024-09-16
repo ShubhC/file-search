@@ -5,7 +5,9 @@ from classifier.trigger_all_classifier import TriggerAllClassifier
         
 class ClassifierRepo:
 
-    def __init__(self) -> None:
+    def __init__(self, indexing_done: bool) -> None:
+        if indexing_done:
+            return
         self._trigger_all_classifier = TriggerAllClassifier()
         self._multi_word_wildcard_classifier = MultiWordWildcardClassifier()
         self._regex_classifier = RegexClassifier()

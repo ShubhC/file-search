@@ -10,7 +10,9 @@ from whoosh.index import create_in
 
 class WhooshAdapter:
     
-    def __init__(self, path_store: PathStore) -> None:
+    def __init__(self, path_store: PathStore, indexing_done: bool) -> None:
+        if indexing_done:
+            return
         self._path_store = path_store
         self._get_all_path = self._path_store.all_path_as_list
         self._whoosh_index = self._create_whoosh_index()

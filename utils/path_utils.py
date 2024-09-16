@@ -9,7 +9,8 @@ def get_all_storage_devices() -> List[Path]:
     drives = win32api.GetLogicalDriveStrings()
     drives = drives.split('\000')[:-1]
     print('Found Drives', drives)
-    return [Path(drive) for drive in drives if not drive.startswith('C')]
+    #return [Path(drive) for drive in drives if not drive.startswith('C')]
+    return [Path(drive) for drive in drives]
 
 def get_all_path_in_dir(dir) -> List[Path]:
     

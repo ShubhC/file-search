@@ -1,3 +1,4 @@
+import pickle
 from flask import Flask, request, jsonify
 from index.index_instances import SearchIndexRepo
 from search_plugins.search_results import SearchResult
@@ -7,6 +8,7 @@ from adapter.whoosh_adapter import WhooshAdapter
 from search_request import SearchMode, SearchRequest
 from search_plugins import regex_search_plugin
 from search_plugins.search_plugin_instances import SearchPluginRepo
+import os
 
 app = Flask(__name__)
 
@@ -26,11 +28,25 @@ def print_search_results(search_result: SearchResult) -> list:
         })
     return results
 
+
+indexing_done_flag = False
+pickle_file = 'search_plugin_repo.pkl'
+if os.path.exists(pickle_file):
+    indexing_done_flag = True
+
 # init vars
-classifier_repo = ClassifierRepo()
-path_store = PathStore()
-whoosh_adapter = WhooshAdapter(path_store)
-search_plugin_repo = SearchPluginRepo(classifier_repo, path_store, whoosh_adapter)
+classifier_repo = ClassifierRepo(indexing_done_flag)
+path_store = PathStore(indexing_done_flag)
+whoosh_adapter = WhooshAdapter(path_store, indexing_done_flag)
+
+# Check if the pickle file exists
+if indexing_done_flag:
+    with open(pickle_file, 'rb') as f:
+        search_plugin_repo = pickle.load(f)
+else:
+    search_plugin_repo = SearchPluginRepo(classifier_repo, path_store, whoosh_adapter)
+    with open(pickle_file, 'wb') as f:
+        pickle.dump(search_plugin_repo, f)
 
 # all search plugin instances
 all_search_plugin_instances = search_plugin_repo.all_search_plugin_instances
@@ -41,12 +57,12 @@ def search():
     search_query = data.get('query')
     search_request = SearchRequest(search_query, SearchMode.Empty)
     results = []
-    
+
     # call each search plugin to get results
     for search_plugin in all_search_plugin_instances:
         search_result = search_plugin.search(search_request)
         results.extend(print_search_results(search_result))
-    
+
     return jsonify(results)
 
 if __name__ == '__main__':
