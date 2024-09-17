@@ -9,6 +9,7 @@ from search_request import SearchMode, SearchRequest
 from search_plugins import regex_search_plugin
 from search_plugins.search_plugin_instances import SearchPluginRepo
 import os
+from quickstart import generate_keywords
 
 app = Flask(__name__)
 
@@ -55,13 +56,22 @@ all_search_plugin_instances = search_plugin_repo.all_search_plugin_instances
 def search():
     data = request.get_json()
     search_query = data.get('query')
+     # Generate keywords using quickstart.py
+    keywords = generate_keywords(search_query)
+
+    # Split the keywords into a list
+    keyword_list = [keyword.strip() for keyword in keywords.split(',')]
+
     search_request = SearchRequest(search_query, SearchMode.Empty)
     results = []
 
     # call each search plugin to get results
-    for search_plugin in all_search_plugin_instances:
-        search_result = search_plugin.search(search_request)
-        results.extend(print_search_results(search_result))
+    for keyword in keyword_list:
+        print(keyword)
+        search_request = SearchRequest(keyword, SearchMode.Empty)
+        for search_plugin in all_search_plugin_instances:
+            search_result = search_plugin.search(search_request)
+            results.extend(print_search_results(search_result))
 
     return jsonify(results)
 
