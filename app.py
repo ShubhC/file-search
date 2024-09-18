@@ -56,6 +56,20 @@ all_search_plugin_instances = search_plugin_repo.all_search_plugin_instances
 def search():
     data = request.get_json()
     search_query = data.get('query')
+    
+    search_request = SearchRequest(search_query, SearchMode.Empty)
+    results = []
+
+    for search_plugin in all_search_plugin_instances:
+        search_result = search_plugin.search(search_request)
+        results.extend(print_search_results(search_result))
+
+    return jsonify(results)
+
+@app.route('/deep-search', methods=['POST'])
+def deep_search():
+    data = request.get_json()
+    search_query = data.get('query')
      # Generate keywords using quickstart.py
     keywords = generate_keywords(search_query)
 
