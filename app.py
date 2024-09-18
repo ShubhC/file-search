@@ -17,18 +17,50 @@ app = Flask(__name__)
 def home():
     return "Hello, Flask!"
 
+def get_name_from_path(path):
+    return os.path.basename(path)
+
 def print_search_results(search_result: SearchResult) -> list:
     results = []
     if not search_result:
         return results
     for search_item in search_result.search_results:
+        fileName = get_name_from_path(str(search_item.item))
         results.append({
             'classifier_score': search_item.classifier_score,
             'index_score': search_item.index_score,
-            'file': str(search_item.item)
+            'file': str(search_item.item),
+            'file_name': fileName
         })
     return results
 
+def rank_files(query, files):
+    def rank_key(file):
+        file_name = file['file_name'].lower()
+        lower_query = query.lower()
+        position = file_name.find(lower_query)
+        count = file_name.count(lower_query)
+        return (position, -count, file_name)
+
+    ranked_files = sorted(files, key=rank_key)
+    return ranked_files
+
+def highlight_query_in_files(query, files):
+    def find_query_positions(file_name, query):
+        positions = []
+        start = file_name.find(query)
+        while start != -1:
+            end = start + len(query) - 1
+            positions.append([start, end])
+            start = file_name.find(query, start + 1)
+        return positions
+
+    for file in files:
+        file_name = file['file_name'].lower()
+        lower_query = query.lower()
+        file['highlighter'] = find_query_positions(file_name, lower_query)
+    
+    return files
 
 indexing_done_flag = False
 pickle_file = 'search_plugin_repo.pkl'
@@ -64,7 +96,10 @@ def search():
         search_result = search_plugin.search(search_request)
         results.extend(print_search_results(search_result))
 
-    return jsonify(results)
+    ranked_files = rank_files(search_query, results)
+    highlighted_files = highlight_query_in_files(search_query, ranked_files)
+
+    return jsonify(highlighted_files)
 
 @app.route('/deep-search', methods=['POST'])
 def deep_search():
@@ -86,6 +121,9 @@ def deep_search():
         for search_plugin in all_search_plugin_instances:
             search_result = search_plugin.search(search_request)
             results.extend(print_search_results(search_result))
+        results = rank_files(keyword, results)
+        results = highlight_query_in_files(keyword, results)
+    
 
     return jsonify(results)
 

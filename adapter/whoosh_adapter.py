@@ -73,4 +73,3 @@ class WhooshAdapter:
 
         return self._search_whoosh_query(whoosh_multisearch_query)
     
-

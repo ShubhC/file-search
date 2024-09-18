@@ -11,18 +11,20 @@ def generate_keywords(user_query):
   response = client.chat.completions.create(
       model="FileSearch", # model = "deployment_name".
       messages=[
-          {"role": "system", "content": ("You are a file search assistant, which will take a user query and get all the possible keywords from that, which will be used in a file search."
-                                         "Final Output will be comma seperated keyword list."
-                                         "If the user Query is directly a file name only then just return that only no keywords required for that."
-                                         "If Query seems to be regex type then consider that return regex keyword basd on that")},
+          {"role": "system", "content": ("You are a File search Assistant. For this task you are given a #query# and you have to get all the possible regex keywords for that query."
+                                         "Those regex keywords will be used for file search."
+                                         "The file search indexing follows regex search."
+                                         "The output should not be case sensitive code will handle that just return regex"
+                                         "Generate all possible regex for a given query not only one mentioned in examples"
+                                         "Final Output will be comma seperated keyword list.")},
           {"role": "user", "content": "All payslips files"},
-          {"role": "assistant", "content": "payslips.pdf, payslips.docx, salary"},
+          {"role": "assistant", "content": "*payslip.pdf, *payslip.doc, *payslip.csv, *payslip, *payslips, payslip, payslips"},
           {"role": "user", "content": "All files ending with .csv"},
           {"role": "assistant", "content": "*.csv"},
           {"role": "user", "content": "Resume.pdf"},
-          {"role": "assistant", "content": "Resume.pdf"},
-          {"role": "user", "content": "All Payslip docs"},
-          {"role": "assistant", "content": "*payslip.pdf, *payslip.doc, *payslip.csv, *payslip, *Payslip, *payslips"},
+          {"role": "assistant", "content": "*Resume.pdf"},
+          {"role": "user", "content": "Payslips"},
+          {"role": "assistant", "content": "*Payslips, *Payslip, *Payslip.pdf, *Payslip.doc, Payslip, Payslips"},
           {"role": "user", "content": user_query}
       ]
   )
