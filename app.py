@@ -13,6 +13,7 @@ from quickstart import generate_keywords
 from pathlib import Path
 import time
 import subprocess
+from utils import utils
 
 app = Flask(__name__)
 
@@ -32,12 +33,12 @@ def print_search_results(search_result: SearchResult) -> list:
         # Get file name
         file_name = file_path.name
         # Get file size in bytes
-        file_size = file_path.stat().st_size
+        file_size = utils.convert_bytes(file_path.stat().st_size)
         
         # Get creation time
-        created_at = time.ctime(os.path.getctime(file_path))
+        created_at = utils.convert_time_format(time.ctime(os.path.getctime(file_path)))
         # Get modification time
-        modified_at = time.ctime(os.path.getmtime(file_path))
+        modified_at = utils.convert_time_format(time.ctime(os.path.getmtime(file_path)))
 
         results.append({
             'classifier_score': search_item.classifier_score,
@@ -147,5 +148,5 @@ def deep_search():
     return jsonify(results)
 
 if __name__ == '__main__':
-    subprocess.Popen(['python', 'C:\\Users\\dechauhan\\file-search\\file_event_listener.py'])
+    subprocess.Popen(['python', 'file_event_listener.py'])
     app.run(debug=True)
