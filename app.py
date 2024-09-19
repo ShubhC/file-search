@@ -45,7 +45,7 @@ def print_search_results(search_result: SearchResult) -> list:
             'file': str(search_item.item),
             'file_name': file_name,
             'created_at': created_at,
-            'modifies_at': modified_at,
+            'modified_at': modified_at,
             'file_size': file_size
         })
     return results
