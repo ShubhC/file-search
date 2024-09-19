@@ -10,6 +10,8 @@ from search_plugins import regex_search_plugin
 from search_plugins.search_plugin_instances import SearchPluginRepo
 import os
 from quickstart import generate_keywords
+from pathlib import Path
+import time
 
 app = Flask(__name__)
 
@@ -25,12 +27,24 @@ def print_search_results(search_result: SearchResult) -> list:
     if not search_result:
         return results
     for search_item in search_result.search_results:
-        fileName = get_name_from_path(str(search_item.item))
+        file_path = Path(str(search_item.item))
+        # Get file name
+        file_name = file_path.name
+        # Get file size in bytes
+        file_size = file_path.stat().st_size
+        # Get creation time
+        created_at = time.ctime(os.path.getctime(file_path))
+        # Get modification time
+        modified_at = time.ctime(os.path.getmtime(file_path))
+
         results.append({
             'classifier_score': search_item.classifier_score,
             'index_score': search_item.index_score,
             'file': str(search_item.item),
-            'file_name': fileName
+            'file_name': file_name,
+            'created_at': created_at,
+            'modifies_at': modified_at,
+            'file_size': file_size
         })
     return results
 
