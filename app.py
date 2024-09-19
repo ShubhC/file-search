@@ -12,6 +12,7 @@ import os
 from quickstart import generate_keywords
 from pathlib import Path
 import time
+import subprocess
 
 app = Flask(__name__)
 
@@ -27,11 +28,12 @@ def print_search_results(search_result: SearchResult) -> list:
     if not search_result:
         return results
     for search_item in search_result.search_results:
-        file_path = Path(str(search_item.item))
+        file_path = Path(search_item.item)
         # Get file name
         file_name = file_path.name
         # Get file size in bytes
         file_size = file_path.stat().st_size
+        
         # Get creation time
         created_at = time.ctime(os.path.getctime(file_path))
         # Get modification time
@@ -72,7 +74,10 @@ def highlight_query_in_files(query, files):
     for file in files:
         file_name = file['file_name'].lower()
         lower_query = query.lower()
-        file['highlighter'] = find_query_positions(file_name, lower_query)
+        words = lower_query.split()
+        file['highlighter'] = []
+        for word in words:
+            file['highlighter'].extend(find_query_positions(file_name, word))
     
     return files
 
@@ -142,4 +147,5 @@ def deep_search():
     return jsonify(results)
 
 if __name__ == '__main__':
+    subprocess.Popen(['python', 'C:\\Users\\dechauhan\\file-search\\file_event_listener.py'])
     app.run(debug=True)
