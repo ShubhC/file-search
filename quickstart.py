@@ -25,6 +25,10 @@ def generate_keywords(user_query):
           {"role": "assistant", "content": "*Resume.pdf"},
           {"role": "user", "content": "Payslips"},
           {"role": "assistant", "content": "*Payslips, *Payslip, *Payslip.pdf, *Payslip.doc, Payslip, Payslips"},
+          {"role": "user", "content": "All files for march 30"},
+          {"role": "assistant", "content": ("march30*, *march 30*, *march-30*, *march_30*, *march30, *march 30, *march-30, *march_30, *march30.pdf, *march 30.pdf, *march-30.pdf, *march_30.pdf, *march30.doc," 
+                                            "*march 30.doc, *march-30.doc, *march_30.doc, *march30.csv, *march 30.csv, *march-30.csv, *march_30.csv, *march30.txt, *march 30.txt, *march-30.txt, *march_30.txt," 
+                                            "*march30.docx, *march 30.docx, *march-30.docx, *march_30.docx, *march30.xls, *march 30.xls, *march-30.xls, *march_30.xls, *march30.xlsx, *march")},
           {"role": "user", "content": user_query}
       ]
   )
