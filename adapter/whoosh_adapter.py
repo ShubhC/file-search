@@ -29,12 +29,18 @@ class WhooshAdapter:
         return whoosh_index
     
     def _update_index(self, additions: List[Path], deletions: List[Path]):
-        # TODO: implement deletions
         whoosh_index_writer = self._whoosh_index.writer()
-        for path in additions:
-            file_or_dir = path.name
-            whoosh_index_writer.add_document(file_or_dir=file_or_dir, path=path)
-            #print('adding {0} to index'.format(file_or_dir))
+
+        if additions:
+            for path in additions:
+                file_or_dir = path.name
+                whoosh_index_writer.add_document(file_or_dir=file_or_dir, path=path)
+                #print('adding {0} to index'.format(file_or_dir))
+        
+        if deletions:
+            for path in deletions:
+                whoosh_index_writer.delete_by_term('path', str(path))
+                
         whoosh_index_writer.commit()
     
     def _search_whoosh_query(self, whoosh_query) -> List[Path]:
