@@ -141,9 +141,9 @@ def deep_search():
             search_result = search_plugin.search(search_request)
             results.extend(print_search_results(search_result))
         results = rank_files(keyword, results)
-        results = highlight_query_in_files(keyword, results)
     
-
+    results = highlight_query_in_files(search_query, results)
+    
     return jsonify(results)
 
 if __name__ == '__main__':
