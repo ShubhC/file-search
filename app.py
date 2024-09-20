@@ -8,14 +8,20 @@ from adapter.whoosh_adapter import WhooshAdapter
 from search_request import SearchMode, SearchRequest
 from search_plugins import regex_search_plugin
 from search_plugins.search_plugin_instances import SearchPluginRepo
+from search_plugins.search_plugin_name import SearchPluginName
 import os
 from quickstart import generate_keywords
 from pathlib import Path
 import time
 import subprocess
 from utils import utils
+import re
+
 
 app = Flask(__name__)
+
+# Global variable to track seen files
+seen_files = set()
 
 @app.route('/')
 def home():
@@ -25,11 +31,15 @@ def get_name_from_path(path):
     return os.path.basename(path)
 
 def print_search_results(search_result: SearchResult) -> list:
+    global seen_files
     results = []
     if not search_result:
         return results
     for search_item in search_result.search_results:
         file_path = Path(search_item.item)
+        if str(file_path) in seen_files:
+            continue
+        seen_files.add(str(file_path))
         # Get file name
         file_name = file_path.name
         # Get file size in bytes
@@ -82,6 +92,14 @@ def highlight_query_in_files(query, files):
     
     return files
 
+
+def is_valid_regex(query):
+    try:
+        re.compile(query)
+        return True
+    except re.error:
+        return False
+
 indexing_done_flag = False
 pickle_file = 'search_plugin_repo.pkl'
 if os.path.exists(pickle_file):
@@ -106,15 +124,23 @@ all_search_plugin_instances = search_plugin_repo.all_search_plugin_instances
 
 @app.route('/search', methods=['POST'])
 def search():
+    global seen_files
+    seen_files.clear()  # Clear seen_files at the beginning of each search request
     data = request.get_json()
     search_query = data.get('query')
     
     search_request = SearchRequest(search_query, SearchMode.Empty)
+    search_request_regex = SearchRequest(search_query, SearchMode.Regex)
     results = []
 
     for search_plugin in all_search_plugin_instances:
-        search_result = search_plugin.search(search_request)
-        results.extend(print_search_results(search_result))
+        if search_plugin._search_plugin_name == SearchPluginName.RegexSearchPlugin and is_valid_regex(search_query):
+            search_request_regex = search_plugin.search(search_request_regex)
+            results.extend(print_search_results(search_request_regex))
+            print("check")
+        elif search_plugin.search_plugin_name == SearchPluginName.MultiWordLookupSearchPlugin:
+            search_result = search_plugin.search(search_request)
+            results.extend(print_search_results(search_result))
 
     ranked_files = rank_files(search_query, results)
     highlighted_files = highlight_query_in_files(search_query, ranked_files)
@@ -123,6 +149,8 @@ def search():
 
 @app.route('/deep-search', methods=['POST'])
 def deep_search():
+    global seen_files
+    seen_files.clear()  # Clear seen_files at the beginning of each search request
     data = request.get_json()
     search_query = data.get('query')
      # Generate keywords using quickstart.py
@@ -131,16 +159,21 @@ def deep_search():
     # Split the keywords into a list
     keyword_list = [keyword.strip() for keyword in keywords.split(',')]
 
-    search_request = SearchRequest(search_query, SearchMode.Empty)
+    #search_request = SearchRequest(search_query, SearchMode.Empty)
     results = []
 
     # call each search plugin to get results
     for keyword in keyword_list:
         print(keyword)
         search_request = SearchRequest(keyword, SearchMode.Empty)
+        search_request_regex = SearchRequest(keyword, SearchMode.Regex)
         for search_plugin in all_search_plugin_instances:
-            search_result = search_plugin.search(search_request)
-            results.extend(print_search_results(search_result))
+            if search_plugin._search_plugin_name == SearchPluginName.RegexSearchPlugin and is_valid_regex(keyword):
+                search_request_regex = search_plugin.search(search_request_regex)
+                results.extend(print_search_results(search_request_regex))
+            elif search_plugin.search_plugin_name == SearchPluginName.MultiWordLookupSearchPlugin:
+                search_result = search_plugin.search(search_request)
+                results.extend(print_search_results(search_result))
         results = rank_files(keyword, results)
     
     results = highlight_query_in_files(search_query, results)
